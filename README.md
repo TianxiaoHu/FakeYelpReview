@@ -25,6 +25,16 @@ python json_to_csv_converter.py ./dataset/yelp_dataset/review.json
 
 ### Prepare Char-level Generation Input
 
+```bash
+# generate a tiny input dataset (~137K) for sanity check
+python generate_char_level_input.py -o dataset/input_tiny.txt -n 200
+
+# generate a small input dataset (~5.7M) for network tuning
+python generate_char_level_input.py -o dataset/input_tiny.txt -n 10000
+```
+
+**📌4/21/2019**: Use `input_tiny.txt` for two-layer LSTM.
+
 ## Reference
 
 ### OOTB Implementation
