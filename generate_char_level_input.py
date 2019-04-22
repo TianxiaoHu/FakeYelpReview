@@ -13,8 +13,9 @@ def parse_and_save(input, output, review_num=None):
         data = pd.read_csv(input, usecols=["text", "stars"], dtype={
             "text": str, "stars": str})
 
-    def filter_non_eng_char(string):
-        return "".join(list(filter(lambda x: ord(x) < 128, string)))
+    def filter_non_eng_char_and_line_break(string):
+        eng_str = "".join(list(filter(lambda x: ord(x) < 128, string)))
+        return eng_str.replace("\n", "")
 
     def convert_to_token(star):
         token_dict = {"1.0": "<ONE>", "2.0": "<TWO>",
@@ -23,7 +24,7 @@ def parse_and_save(input, output, review_num=None):
 
     data = data.dropna()
     print("Converting... step 1/2..", '\n')
-    data.text = data.text.progress_apply(filter_non_eng_char)
+    data.text = data.text.progress_apply(filter_non_eng_char_and_line_break)
     print("Converting... step 2/2..", '\n')
     data.stars = data.stars.progress_apply(convert_to_token)
     data["converted_review"] = data.stars + data.text
