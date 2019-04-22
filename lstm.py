@@ -39,13 +39,16 @@ def train(input, output, name, continue_from, learning_rate, batch_size, epoch):
     indices_char = dict((i, c) for i, c in enumerate(chars))
 
     # cut the text in semi-redundant sequences of maxlen characters
-    maxlen = 40
+    with io.open(input, encoding='utf-8') as f:
+        lines = f.readlines()
+    maxlen = 20
     step = 3
     sentences = []
     next_chars = []
-    for i in range(0, len(text) - maxlen, step):
-        sentences.append(text[i: i + maxlen])
-        next_chars.append(text[i + maxlen])
+    for line in lines:
+        for i in range(0, len(line) - maxlen, step):
+            sentences.append(line[i: i + maxlen])
+            next_chars.append(line[i + maxlen])
     print('nb sequences:', len(sentences))
 
     print('Vectorization...')
@@ -72,9 +75,9 @@ def train(input, output, name, continue_from, learning_rate, batch_size, epoch):
         save_path = os.path.join(output, exp_name)
         model = load_model(os.path.join(output, continue_from))
     else:
-        model.add(LSTM(1024, input_shape=(
-            None, len(chars)), return_sequences=True))
-        model.add(LSTM(1024, input_shape=(None, len(chars))))
+        # model.add(LSTM(256, input_shape=(
+        #     None, len(chars)), return_sequences=True))
+        model.add(LSTM(256, input_shape=(None, len(chars))))
         model.add(Dense(len(chars), activation='softmax'))
 
     optimizer = RMSprop(lr=learning_rate)
@@ -100,7 +103,9 @@ def train(input, output, name, continue_from, learning_rate, batch_size, epoch):
 
             generated = ''
             # sentence = text[start_index: start_index + maxlen]
-            sentence_list = ['<ONE>', '<THREE>', '<FIVE>']
+            sentence_list = ['<<<<<<<<ONE>>>>>>>>>',
+                             '<<<<<<<THREE>>>>>>>>',
+                             '<<<<<<<<FIVE>>>>>>>>']
             for sentence in sentence_list:
                 generated = sentence
                 print('----- Generating with seed: "' + sentence + '"')
@@ -115,7 +120,9 @@ def train(input, output, name, continue_from, learning_rate, batch_size, epoch):
                     next_index = sample(preds, diversity)
                     next_char = indices_char[next_index]
 
-                    sentence = sentence[1:] + next_char
+                    sentence = sentence + next_char
+                    if(len(sentence) > maxlen):
+                        sentence = sentence[- maxlen: ]
 
                     sys.stdout.write(next_char)
                     sys.stdout.flush()

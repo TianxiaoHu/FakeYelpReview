@@ -4,7 +4,7 @@ import argparse
 import pandas as pd
 
 
-def parse_and_save(input, output, review_num=None):
+def parse_and_save(input, output, review_num=None, stars_padding=40):
     tqdm.pandas()
     if review_num:
         data = pd.read_csv(input, usecols=["text", "stars"], dtype={
@@ -20,6 +20,10 @@ def parse_and_save(input, output, review_num=None):
     def convert_to_token(star):
         token_dict = {"1.0": "<ONE>", "2.0": "<TWO>",
                       "3.0": "<THREE>", "4.0": "<FOUR>", "5.0": "<FIVE>"}
+        for key in token_dict.keys():
+            left_padding = (stars_padding - len(token_dict[key])) / 2
+            right_padding = stars_padding - left_padding - len(token_dict[key])
+            token_dict[key] = left_padding * '<' + token_dict[key] + right_padding * '>'
         return token_dict[star]
 
     data = data.dropna()
@@ -58,6 +62,13 @@ if __name__ == '__main__':
         type=str,
         default=None,
         help='How many reviews to convert.',
+    )
+
+    parser.add_argument(
+        '-s', '--stars_padding',
+        type=int,
+        default=40,
+        help='Add padding around stars. Should be equal to max_len in `lstm.py`',
     )
     args = parser.parse_args()
 
