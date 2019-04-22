@@ -33,7 +33,26 @@ python generate_char_level_input.py -o dataset/input_tiny.txt -n 200
 python generate_char_level_input.py -o dataset/input_tiny.txt -n 10000
 ```
 
-**📌4/21/2019**: Use `input_tiny.txt` for two-layer LSTM.
+**📌4/21/2019**: Use `input_small.txt` for two-layer LSTM.
+
+## Generation Model
+
+### two-layer LSTM
+
+```bash
+# train a new two-layer LSTM model using input_small.txt
+# experiment name: small_lstm
+# learning rate: 0.001
+# batch size: 1024
+# epoch: 20
+# model checkpoints and log saved per epoch in new folder under `model/`
+python lstm.py -i dataset/input_small.txt -o model/ -n small_lstm -l 0.001 -b 1024 -e 20
+
+# loading model from checkpoint and continue training
+# starting from checkpoint `weights.2-2.81.hdf5`
+# changed learning rate to 1e-4
+python lstm.py -i dataset/input_tiny.txt -o model/ -n small_lstm -c 'small_lstm-2019-04-22_04:09:06/weights.2-2.81.hdf5' -l 0.0001 -b 1024 -e 10
+```
 
 ## Reference
 
