@@ -27,17 +27,16 @@ python json_to_csv_converter.py ./dataset/yelp_dataset/review.json
 
 Remove non-English chars and remove line break symbols(`\n`).
 
-Add padding: 1 star -> `<<<<<<<<ONE>>>>>>>>>`
-
 ```bash
 # generate a tiny input dataset (~137K) for sanity check
 python generate_char_level_input.py -o dataset/input_tiny.txt -n 200
 
 # generate a small input dataset (~5.7M) for network tuning
 python generate_char_level_input.py -o dataset/input_small.txt -n 10000
-```
 
-**📌4/21/2019**: Use `input_small.txt` for two-layer LSTM.
+# generate a small input dataset (~4.7M) for 5 star reviews
+python generate_char_level_input.py -o dataset/input_small_5s.txt -n 10000 -s 5
+```
 
 ## Generation Model
 
@@ -57,6 +56,10 @@ python lstm.py -i dataset/input_small.txt -o model/ -n small_lstm -l 0.001 -b 10
 # changed learning rate to 1e-4
 python lstm.py -i dataset/input_tiny.txt -o model/ -n small_lstm -c 'small_lstm-2019-04-22_04:09:06/weights.2-2.81.hdf5' -l 0.0001 -b 1024 -e 10
 ```
+
+**📌4/21/2019**: Use `input_small.txt` for two-layer LSTM. Input: <ONE> + review -> can't catch the difference between 1-star and 5-star review.
+
+**📌4/23/2019**: Train separate model using different input dataset (from 1 star to 5 star). Generated some reasonable results on 10000 reviews.
 
 ## Reference
 

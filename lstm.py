@@ -41,14 +41,23 @@ def train(input, output, name, continue_from, learning_rate, batch_size, epoch):
     # cut the text in semi-redundant sequences of maxlen characters
     with io.open(input, encoding='utf-8') as f:
         lines = f.readlines()
-    maxlen = 20
+    maxlen = 40
     step = 3
     sentences = []
     next_chars = []
     for line in lines:
-        for i in range(0, len(line) - maxlen, step):
-            sentences.append(line[i: i + maxlen])
-            next_chars.append(line[i + maxlen])
+        if len(line) > maxlen:
+            for i in range(0, maxlen):
+                sentences.append(line[0: i])
+                next_chars.append(line[i])
+            for i in range(0, len(line) - maxlen, step):
+                sentences.append(line[i: i + maxlen])
+                next_chars.append(line[i + maxlen])
+        else:
+            for i in range(0, len(line) - 1):
+                sentences.append(line[0: i])
+                next_chars.append(line[i])
+
     print('nb sequences:', len(sentences))
 
     print('Vectorization...')
@@ -75,8 +84,8 @@ def train(input, output, name, continue_from, learning_rate, batch_size, epoch):
         save_path = os.path.join(output, exp_name)
         model = load_model(os.path.join(output, continue_from))
     else:
-        # model.add(LSTM(256, input_shape=(
-        #     None, len(chars)), return_sequences=True))
+        model.add(LSTM(256, input_shape=(
+            None, len(chars)), return_sequences=True))
         model.add(LSTM(256, input_shape=(None, len(chars))))
         model.add(Dense(len(chars), activation='softmax'))
 
@@ -97,21 +106,21 @@ def train(input, output, name, continue_from, learning_rate, batch_size, epoch):
         print()
         print('----- Generating text after Epoch: %d' % epoch)
 
-        # start_index = random.randint(0, len(text) - maxlen - 1)
         for diversity in [0.2, 0.5, 1.0, 1.2]:
             print('----- diversity:', diversity)
 
             generated = ''
-            # sentence = text[start_index: start_index + maxlen]
-            sentence_list = ['<<<<<<<<ONE>>>>>>>>>',
-                             '<<<<<<<THREE>>>>>>>>',
-                             '<<<<<<<<FIVE>>>>>>>>']
+            sentence_list = [""]
+            for _ in range(3):
+                start_index =random.randint(0, 25)
+                sentence_list.append(str(chr(start_index + ord('A'))))
+
             for sentence in sentence_list:
                 generated = sentence
                 print('----- Generating with seed: "' + sentence + '"')
                 sys.stdout.write(generated)
 
-                for i in range(100):
+                for i in range(400):
                     x_pred = np.zeros((1, maxlen, len(chars)))
                     for t, char in enumerate(sentence):
                         x_pred[0, t, char_indices[char]] = 1.
