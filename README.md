@@ -59,7 +59,12 @@ python lstm.py -i dataset/input_tiny.txt -o model/ -n small_lstm -c 'small_lstm-
 
 **📌4/21/2019**: Use `input_small.txt` for two-layer LSTM. Input: <ONE> + review -> can't catch the difference between 1-star and 5-star review.
 
-**📌4/23/2019**: Train separate model using different input dataset (from 1 star to 5 star). Generated some reasonable results on 10000 reviews.
+**📌4/23/2019**: Train separate model using different input dataset (from 1 star to 5 star). Generated some reasonable results on 10000 reviews after training 20 epoch.
+
+Examples: 
+
+- This place is awesome! The food is always fresh and the service is always fresh.  I will definitely be back to try this place out. Shawn and the staff was very friendly.  I am a great place to come here again and they are the best I've ever had. The service was excellent and the service is very friendly. The service is always fresh and delicious. I can't wait to go back again!!!!!!!
+- Pleasantly surprised with the best pizza in town. The prices are very friendly and always happy to find a couple of times and they are the best I've ever had.
 
 ## Reference
 
