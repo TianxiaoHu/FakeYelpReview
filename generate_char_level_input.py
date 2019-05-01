@@ -45,7 +45,7 @@ if __name__ == '__main__':
     parser.add_argument(
         '-i', '--input',
         type=str,
-        default='./dataset/yelp_dataset/review.csv',
+        default='./dataset/yelp_dataset/restaurant_review.csv',
         help='The csv file to convert.',
     )
 

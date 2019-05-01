@@ -13,7 +13,7 @@ TODO
 
 Original data is saved at `FakeYelpReview/dataset/`
 
-After decompression, there are **7** json files under `FakeYelpReview/dataset/yelp_dataset`. However, we only use `review.json` for training and generation.
+After decompression, there are **7** json files under `FakeYelpReview/dataset/yelp_dataset`. However, we only use `review.json` and `business.json`for training and generation.
 
 ```bash
 # convert json to csv
@@ -21,6 +21,16 @@ After decompression, there are **7** json files under `FakeYelpReview/dataset/ye
 # WARNING: the last update is in 2014, so use python 2.7 to execute the python script
 # converted csv file will be saved at `FakeYelpReview/dataset/`
 python json_to_csv_converter.py ./dataset/yelp_dataset/review.json
+
+# updated script json_to_csv_converter_py3.py to support python 3
+python json_to_csv_converter_py3.py ./dataset/yelp_dataset/business.json
+
+# all kinds of reviews are contained in review.csv
+# only extract reviews for restaurants
+# converted file saved at `FakeYelpReview/dataset/yelp_dataset`
+python extract_restaurant_review.py
+# Total review number: 6685900
+# Restaurant review number: 4201684
 ```
 
 ### Prepare Char-level Generation Input
