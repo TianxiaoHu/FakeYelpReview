@@ -9,7 +9,7 @@ def parse_and_save(input, output, review_num=None, star=0):
     if review_num:
         # read 7 times of review_num to ensure enough reviews can be covered
         data = pd.read_csv(input, usecols=["text", "stars"], dtype={
-            "text": str, "stars": int}, nrows=int(7 * review_num))
+            "text": str, "stars": int}, nrows=int(10 * review_num))
     else:
         data = pd.read_csv(input, usecols=["text", "stars"], dtype={
             "text": str, "stars": int})
@@ -28,7 +28,7 @@ def parse_and_save(input, output, review_num=None, star=0):
 
     with open(output, "w") as f:
         print("Writing...", '\n')
-        for index, row in tqdm(data.iterrows(), total=data.shape[0]):
+        for index, row in tqdm(data.iterrows(), total=min(data.shape[0], review_num)):
             f.write(row.text + '\n')
             write_num += 1
             if review_num and write_num >= review_num:
