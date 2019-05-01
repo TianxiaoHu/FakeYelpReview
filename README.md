@@ -1,3 +1,5 @@
+# This is a branch for gpt-2 https://github.com/minimaxir/gpt-2-simple
+
 # FakeYelpReview
 Final project for CS282 - Designing, Visualizing and Understanding Deep Neural Networks (Spring 2019) @ UC Berkeley. 
 
