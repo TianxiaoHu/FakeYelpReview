@@ -33,7 +33,7 @@ python extract_restaurant_review.py
 # Restaurant review number: 4201684
 ```
 
-### Prepare Char-level Generation Input
+### Prepare Generation Input
 
 Remove non-English chars and remove line break symbols(`\n`).
 
@@ -50,32 +50,23 @@ python generate_char_level_input.py -o dataset/input_small_5s.txt -n 10000 -s 5
 
 ## Generation Model
 
-### two-layer LSTM
+### Word-level review generation
 
-```bash
-# train a new two-layer LSTM model using input_small.txt
-# experiment name: small_lstm
-# learning rate: 0.001
-# batch size: 1024
-# epoch: 20
-# model checkpoints and log saved per epoch in new folder under `model/`
-python lstm.py -i dataset/input_small.txt -o model/ -n small_lstm -l 0.001 -b 1024 -e 20
+This part of our project utilizes word embedding to realize word-level review generation. Due to the large vocabulary size (typically tens of thousand) and limited computation resources, only 6000 most frequent words are selected. The embedded output is then fed as the input of a stacked two-layer gated recurrent units (GRU). Finally, the output is linearly projected to word space and yields a softmax probability.
 
-# loading model from checkpoint and continue training
-# starting from checkpoint `weights.2-2.81.hdf5`
-# changed learning rate to 1e-4
-python lstm.py -i dataset/input_tiny.txt -o model/ -n small_lstm -c 'small_lstm-2019-04-22_04:09:06/weights.2-2.81.hdf5' -l 0.0001 -b 1024 -e 10
-```
+To improve the model performance and training speed, within GRU, a dropout probability of 0.2 is employed to all reset and input gates. A dropout probability of 0.5 is employed between the word embedding layer and the GRU, and between the GRU and the fully-connected output layer. 
 
-**📌4/21/2019**: Use `input_small.txt` for two-layer LSTM. Input: <ONE> + review -> can't catch the difference between 1-star and 5-star review.
+**Sample generated texts:**
 
-**📌4/23/2019**: Train separate model using different input dataset (from 1 star to 5 star). Generated some reasonable results on 10000 reviews after training 20 epoch.
-
-Examples: 
-
-- This place is awesome! The food is always fresh and the service is always fresh.  I will definitely be back to try this place out. Shawn and the staff was very friendly.  I am a great place to come here again and they are the best I've ever had. The service was excellent and the service is very friendly. The service is always fresh and delicious. I can't wait to go back again!!!!!!!
-- Pleasantly surprised with the best pizza in town. The prices are very friendly and always happy to find a couple of times and they are the best I've ever had.
-
+- If you're looking for a small place to take a good time at the end of the night. I would recommend this place to anyone to try the <unk\>, and you won't be disappointed. Weeknight, and the food is great.
+- My husband and I were looking for a little <unk\>. The pizza was delicious, the shrimp was good and the chicken was good! My friend had the chicken and the shrimp and it was delicious. The chips were great and the food was amazing!
+- This is a great place to eat. I've had a few people here. The place is very nice and the service is exceptional. I would recommend the food and food.
+- Very good, the food was delicious. I had a great meal and the food was great. I'm so glad I had the same thing that I had. I'm not sure if I was going to get a drink.
+- A few years ago, and I was really excited to try for my first time. I'm glad I would be going back to the place. The food was good, the food was good, but the food was pretty good.
+- I was told that the other employee came out and said they were. We sat in the front desk for our table. They brought us the food and the waiter was very friendly and nice.
+ 
+ (Nothing changed except for formatting)
+ 
 ## Reference
 
 ### OOTB Implementation
