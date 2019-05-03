@@ -41,7 +41,7 @@ def train(input, output, name, continue_from, learning_rate, batch_size, epoch):
     # cut the text in semi-redundant sequences of maxlen characters
     with io.open(input, encoding='utf-8') as f:
         lines = f.readlines()
-    maxlen = 40
+    maxlen = 60
     step = 3
     sentences = []
     next_chars = []

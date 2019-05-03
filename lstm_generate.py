@@ -23,7 +23,7 @@ def sample(preds, temperature=1.0):
     return np.argmax(probas)
 
 
-def generate(model, start, length, temperature, maxlen=40):
+def generate(model, start, length, temperature, maxlen=60):
     # maxlen should equal to training script's maxlen
 
     sentence = start
