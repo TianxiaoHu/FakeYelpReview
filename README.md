@@ -5,7 +5,13 @@ Data downloaded from [Yelp Open Dataset](https://www.yelp.com/dataset).
 
 ## Installation
 
-TODO
+python version == 3.6
+
+tensorflow==1.10.0
+
+Keras==2.2.4
+
+tqdm==4.31.1
 
 ## Data Preprocessing
 
@@ -33,7 +39,7 @@ python extract_restaurant_review.py
 # Restaurant review number: 4201684
 ```
 
-### Prepare Char-level Generation Input
+### Prepare Input
 
 Remove non-English chars and remove line break symbols(`\n`).
 
@@ -48,9 +54,9 @@ python generate_char_level_input.py -o dataset/input_small.txt -n 10000
 python generate_char_level_input.py -o dataset/input_small_5s.txt -n 10000 -s 5
 ```
 
-## Generation Model
+## Model Training
 
-### two-layer LSTM
+### Vanilla Two-layer LSTM (master branch)
 
 ```bash
 # train a new two-layer LSTM model using input_small.txt
@@ -67,14 +73,8 @@ python lstm.py -i dataset/input_small.txt -o model/ -n small_lstm -l 0.001 -b 10
 python lstm.py -i dataset/input_tiny.txt -o model/ -n small_lstm -c 'small_lstm-2019-04-22_04:09:06/weights.2-2.81.hdf5' -l 0.0001 -b 1024 -e 10
 ```
 
-**📌4/21/2019**: Use `input_small.txt` for two-layer LSTM. Input: <ONE> + review -> can't catch the difference between 1-star and 5-star review.
-
-**📌4/23/2019**: Train separate model using different input dataset (from 1 star to 5 star). Generated some reasonable results on 10000 reviews after training 20 epoch.
-
-Examples: 
-
-- This place is awesome! The food is always fresh and the service is always fresh.  I will definitely be back to try this place out. Shawn and the staff was very friendly.  I am a great place to come here again and they are the best I've ever had. The service was excellent and the service is very friendly. The service is always fresh and delicious. I can't wait to go back again!!!!!!!
-- Pleasantly surprised with the best pizza in town. The prices are very friendly and always happy to find a couple of times and they are the best I've ever had.
+- training 10000 reivews on Google colab takes ~10min/epoch, accelerated with GPU. memory usage: ~15G
+- training 20000 reviews on AWS p2.xlarge takes ~40min/epoch, accelrated with a K80. memory usage: ~30G
 
 ## Reference
 
