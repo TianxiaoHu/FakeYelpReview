@@ -76,6 +76,29 @@ python lstm.py -i dataset/input_tiny.txt -o model/ -n small_lstm -c 'small_lstm-
 - training 10000 reivews on Google colab takes ~10min/epoch, accelerated with GPU. memory usage: ~15G
 - training 20000 reviews on AWS p2.xlarge takes ~40min/epoch, accelrated with a K80. memory usage: ~30G
 
+### Textgenrnn Two-layer LSTM (textgenrnn branch)
+
+```bash
+# train two-layer char level LSTM model with 256 cells each and 100 embedding size.
+# Input should be text file and separate reviews in lines
+# Will generate three files during training (with the output name you defined): _weights.hdf5 file, _vocab.json, and _config.json
+# Will automatically generate temperature 0.2 and 0.5 reviews after training and save in separate files
+# Recommendation: Loss < 1
+python textgenrnn_training.py -i input_5s.txt -o test_model -epo 20 -epo_gen 5 -n 10 -l 300
+
+# Loading model locally:
+from textgenrnn import textgenrnn
+textgen = textgenrnn(weights_path='test_model_weights.hdf5',
+                       vocab_path='test_model_vocab.json',
+                       config_path='test_model_config.json')
+
+# Python syntax to generate reviews (to file)
+# can also provide prefix
+textgen.generate_samples(max_gen_length=300,n=10,temperature=0.2)
+textgen.generate_to_file('textgenrnn_texts.txt', max_gen_length=300, n=10, temperature=0.2)
+
+```
+
 ## Reference
 
 ### OOTB Implementation
