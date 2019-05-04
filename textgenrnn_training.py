@@ -32,7 +32,7 @@ def generate_review(num,text_len,output):
                        vocab_path=output+'_vocab.json',
                        config_path=output+'_config.json')
     textgen.generate_to_file(output+'_temp2_textgenrnn_texts.txt', max_gen_length=text_len,n=num,temperature=0.2)
-    textgen.generate_to_file(output+'_temp5_textgenrnn_texts.txt', max_gen_length=text_len,n=num,temperature=0.2)
+    textgen.generate_to_file(output+'_temp5_textgenrnn_texts.txt', max_gen_length=text_len,n=num,temperature=0.)
 
 
 if __name__ == '__main__':
