@@ -1,7 +1,7 @@
-# FakeYelpReview
-Final project for CS282 - Designing, Visualizing and Understanding Deep Neural Networks (Spring 2019) @ UC Berkeley. 
-
-Data downloaded from [Yelp Open Dataset](https://www.yelp.com/dataset).
+# FakeYelpReview - textgenrnn branch
+Textgenrnn attention-based char-by-char model that we used to compare with vanilla LSTM model.
+Model structure: two 256 cell LSTMs followed by an attention layer with embedding size 100.
+Batch size is 1024, and 30 tokens are considered before predicting the next one.
 
 ## Installation
 
@@ -11,110 +11,49 @@ tensorflow==1.10.0
 
 Keras==2.2.4
 
-tqdm==4.31.1
+textgenrnn (can be installed with pip3)
 
-## Data Preprocessing
-
-### Convert `json` to `csv` format
-
-Original data is saved at `FakeYelpReview/dataset/`
-
-After decompression, there are **7** json files under `FakeYelpReview/dataset/yelp_dataset`. However, we only use `review.json` and `business.json`for training and generation.
-
-```bash
-# convert json to csv
-# json_to_csv_converter.py downloaded from https://github.com/Yelp/dataset-examples
-# WARNING: the last update is in 2014, so use python 2.7 to execute the python script
-# converted csv file will be saved at `FakeYelpReview/dataset/`
-python json_to_csv_converter.py ./dataset/yelp_dataset/review.json
-
-# updated script json_to_csv_converter_py3.py to support python 3
-python json_to_csv_converter_py3.py ./dataset/yelp_dataset/business.json
-
-# all kinds of reviews are contained in review.csv
-# only extract reviews for restaurants
-# converted file saved at `FakeYelpReview/dataset/yelp_dataset`
-python extract_restaurant_review.py
-# Total review number: 6685900
-# Restaurant review number: 4201684
-```
-
-### Prepare Input
-
-Remove non-English chars and remove line break symbols(`\n`).
-
-```bash
-# generate a tiny input dataset (~137K) for sanity check
-python generate_char_level_input.py -o dataset/input_tiny.txt -n 200
-
-# generate a small input dataset (~5.7M) for network tuning
-python generate_char_level_input.py -o dataset/input_small.txt -n 10000
-
-# generate a small input dataset (~4.7M) for 5 star reviews
-python generate_char_level_input.py -o dataset/input_small_5s.txt -n 10000 -s 5
-```
 
 ## Model Training
 
-### Vanilla Two-layer LSTM (master branch)
-
-```bash
-# train a new two-layer LSTM model using input_small.txt
-# experiment name: small_lstm
-# learning rate: 0.001
-# batch size: 1024
-# epoch: 20
-# model checkpoints and log saved per epoch in new folder under `model/`
-python lstm.py -i dataset/input_small.txt -o model/ -n small_lstm -l 0.001 -b 1024 -e 20
-
-# loading model from checkpoint and continue training
-# starting from checkpoint `weights.2-2.81.hdf5`
-# changed learning rate to 1e-4
-python lstm.py -i dataset/input_tiny.txt -o model/ -n small_lstm -c 'small_lstm-2019-04-22_04:09:06/weights.2-2.81.hdf5' -l 0.0001 -b 1024 -e 10
-```
-
-- training 10000 reivews on Google colab takes ~10min/epoch, accelerated with GPU. memory usage: ~15G
-- training 20000 reviews on AWS p2.xlarge takes ~40min/epoch, accelrated with a K80. memory usage: ~30G
-
-### Textgenrnn Two-layer LSTM (textgenrnn branch)
 
 ```bash
 # train two-layer char level LSTM model with 256 cells each and 100 embedding size.
 # Input should be text file and separate reviews in lines
-# Will generate three files during training (with the output name you defined): _weights.hdf5 file, _vocab.json, and _config.json
-# Will automatically generate temperature 0.2 and 0.5 reviews after training and save in separate files
+# Running the script textgenrnn_training.py will generate three files during training (with the output name you defined): _weights.hdf5 file, _vocab.json, and _config.json
+# Running the script will also automatically generate temperature 0.2 and 0.5 reviews after training and save in separate files
 # Recommendation: Loss < 1
+# input example text file name: input_5s.txt
+# output model example name: text_model
+# epoch: 20, generate reviews for each 5 epochs
+# Numbers of reviews generated after training: 10
+# Length of reviews generated after training 300
+
 python textgenrnn_training.py -i input_5s.txt -o test_model -epo 20 -epo_gen 5 -n 10 -l 300
 
-# Loading model locally:
+# Loading model locally with Python3:
+# For more details, please see reference
 from textgenrnn import textgenrnn
 textgen = textgenrnn(weights_path='test_model_weights.hdf5',
                        vocab_path='test_model_vocab.json',
                        config_path='test_model_config.json')
-
-# Python syntax to generate reviews (to file)
-# can also provide prefix
+                       
+# Continue training process with data trainin_data.txt
+textgen.train_from_file('training_data.txt', num_epochs=1, new_model=False)
+                       
+# Generate reviews (to file textgenrnn_texts.txt)
 textgen.generate_samples(max_gen_length=300,n=10,temperature=0.2)
 textgen.generate_to_file('textgenrnn_texts.txt', max_gen_length=300, n=10, temperature=0.2)
-
+                       
 ```
+
+## Generated sample
+
+**1-star**: The food was okay. The rice was ok, but the waitress was pretty stupid for the first time. We were told they were out of bread. The sandwich was so tough they didn't have a couple of salads.
+
+**5-star**: I love this place.  I have been going to this location and was very convenient. The food was amazing and the service is always good. The owner is super friendly and helpful. The service was fast.
 
 ## Reference
 
-### OOTB Implementation
-
 https://github.com/minimaxir/textgenrnn
 
-https://github.com/minimaxir/gpt-2-simple
-
-### Online Tutorial
-
-https://www.tensorflow.org/tutorials/sequences/text_generation
-
-https://github.com/keras-team/keras/blob/master/examples/lstm_text_generation.py
-
-https://www.dlology.com/blog/how-to-generate-realistic-yelp-restaurant-reviews-with-keras/
-
-https://medium.com/coinmonks/word-level-lstm-text-generator-creating-automatic-song-lyrics-with-neural-networks-b8a1617104fb
-
-https://medium.com/@enriqueav/update-automatic-song-lyrics-creator-with-word-embeddings-e30de94db8d1
