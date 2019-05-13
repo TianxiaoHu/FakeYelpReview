@@ -3,15 +3,17 @@ Final project for CS282 - Designing, Visualizing and Understanding Deep Neural N
 
 Data downloaded from [Yelp Open Dataset](https://www.yelp.com/dataset).
 
-## Installation
+We have 4 models implemented in **4 branch**. Check project branch for more details.
 
-python version == 3.6
+branch master: character-level vanilla two-layer LSTM
 
-tensorflow==1.10.0
+branch textgenrnn: character-level LSTM with Attention Layer
 
-Keras==2.2.4
+branch wordlevel: word-level generation using GRU
 
-tqdm==4.31.1
+branch gpt-2: state-of-the-art GPT-2 model
+
+Refer to our poster and report for more details.
 
 ## Data Preprocessing
 
@@ -54,9 +56,17 @@ python generate_char_level_input.py -o dataset/input_small.txt -n 10000
 python generate_char_level_input.py -o dataset/input_small_5s.txt -n 10000 -s 5
 ```
 
-## Model Training
+## Installation - for master branch
 
-### Vanilla Two-layer LSTM (master branch)
+python version == 3.6
+
+tensorflow==1.10.0
+
+Keras==2.2.4
+
+tqdm==4.31.1
+
+## Model Training - for master branch
 
 ```bash
 # train a new two-layer LSTM model using input_small.txt
@@ -75,6 +85,12 @@ python lstm.py -i dataset/input_tiny.txt -o model/ -n small_lstm -c 'small_lstm-
 
 - training 10000 reivews on Google colab takes ~10min/epoch, accelerated with GPU. memory usage: ~15G
 - training 20000 reviews on AWS p2.xlarge takes ~40min/epoch, accelrated with a K80. memory usage: ~30G
+
+## Generated Sample - for master branch
+
+**1-star**: Will not come here again. We were disappointed that I was the only ones thatthe hostess stopped here. Because of the Kateron that there was a bad serviceand the food was bland and overcooked.
+
+**5-star**: This is the best in Phoenix area! The service was amazing. It was nice andtasty and creative in a large group of friendly and attentive staff and no otheromelet over the exception. I also order the potato, chicken and the chickenparmbialese.
 
 ## Reference
 
