@@ -1,8 +1,12 @@
 # FakeYelpReview - GPT-2 branch
 GPT-2 is the state-of-art model, and we use it as the baseline model for word-level text generation. 
+
 GPT-2 is a transformer-based language generation model, which is proposed by OpenAI in 2019. 
+
 Model structure of simplified GPT-2: 12 repeated transformer blocks with multi-head attention structure. 
+
 We fine-tuned the GPT-2 model using 1,000 reviews, which is enough to generate realistic comments. 
+
 From the experimental result,  the performance of our model (Word-level Generation) is almost close to GPT-2, which proves the accuracy and reliability of our model.
 
 ## Installation
